@@ -9,6 +9,10 @@ class TodoApp extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return new MaterialApp(
+      theme: ThemeData(
+       
+        primaryColor: Colors.red
+      ),
       title: 'Todo List', 
       home : new TodoList()
     );
@@ -49,9 +53,11 @@ void _presentDatePicker(){
          lastDate: DateTime(2021),
          ).then((pickedDate) {
            if(pickedDate==null){
+             print(pickedDate);
              return;
            }
-           setState(() {
+           setState(() { 
+             print(pickedDate);
              _selectedDate = pickedDate;
            });
          });
@@ -66,7 +72,7 @@ void _promptRemoveTodo(int index){
     context: context,
     builder: (BuildContext context){
       return new AlertDialog(
-        title: new Text('Mark "${_todoItems[index]}" done? '),
+        title: new Text('Mark "${_todoItems[index].task}" done? '),
         actions: <Widget>[
           new FlatButton(
             child: new Text('CANCEL'),
@@ -96,14 +102,25 @@ Widget _buildTodoList() {
   }
 
 Widget _buildTodoItem(String todoText, DateTime finishdate , int index) {
-    return new ListTile(
-      title: new Text(todoText),
-      subtitle: new Text(' ${ DateFormat.yMd().format(finishdate)}'),
+    return new Padding(padding: EdgeInsets.all(3),
+    child: 
+     Card( 
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      color: Colors.amber[300],
+      child: new ListTile(
+      title: new Text(todoText.toUpperCase(),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),    
+      ),
+      subtitle: new Text(' ${ DateFormat.yMMMMd('en_US').format(finishdate)}'),
       trailing: new IconButton(
         icon: Icon(Icons.delete),
          onPressed: () =>
             _promptRemoveTodo(index),
            ),
+         ),
+     ),
        );
   }
 
@@ -114,7 +131,8 @@ Widget build(BuildContext context) {
     ),
     body: _buildTodoList(),
     floatingActionButton: new FloatingActionButton(
-      onPressed: _pushAddTodoScreen, // pressing this button now opens the new screen
+      onPressed: _pushAddTodoScreen,
+      backgroundColor: Colors.red, // pressing this button now opens the new screen
       tooltip: 'Add task',
       child: new Icon(Icons.add)
     ),
@@ -139,10 +157,9 @@ void _pushAddTodoScreen() {
               contentPadding: const EdgeInsets.all(16.0)
             ),
             ),
-            Row(children: <Widget>[
-              Text( _selectedDate == null
-                       ? 'No Date Chosen'
-                       : 'Picked Date: ${ DateFormat.yMd().format(_selectedDate)}'),
+            Row(
+              children: <Widget>[
+            
                FlatButton(
                  textColor: Theme.of(context).primaryColor,
                  child: Text(
@@ -155,6 +172,7 @@ void _pushAddTodoScreen() {
             
             ],) ,
             RaisedButton(
+              color: Colors.amber[300],
               child: Text('Add Todo'),
               textColor: Colors.red,
               onPressed: () {
